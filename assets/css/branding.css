@@ -1,0 +1,32 @@
+:root {
+  --aspect-primary: #153D40;
+  --aspect-primary-hover: #1E5555;
+  --aspect-primary-dark: #0B282B;
+  --aspect-secondary: #137D6A;
+  --aspect-secondary-hover: #0F6858;
+  --aspect-accent: #C38B2A;
+  --aspect-text: #203235;
+  --aspect-text-secondary: #4B5E60;
+  --aspect-text-muted: #718183;
+  --aspect-background: #F6FAF8;
+  --aspect-surface: #FFFFFF;
+  --aspect-surface-muted: #EDF3F0;
+  --aspect-border: #D9E3DF;
+  --aspect-success: #26734D;
+  --aspect-warning: #936515;
+  --aspect-error: #B33B35;
+  --aspect-information: #245F78;
+  --aspect-promotion: #A64036;
+  --aspect-shadow-soft: 0 3px 16px rgb(21 61 64 / 8%);
+  --aspect-shadow-menu: 0 14px 32px rgb(11 40 43 / 15%);
+  --aspect-radius-small: 4px;
+  --aspect-radius-medium: 8px;
+  --aspect-space-1: 4px;
+  --aspect-space-2: 8px;
+  --aspect-space-3: 12px;
+  --aspect-space-4: 16px;
+  --aspect-space-6: 24px;
+  --aspect-space-8: 32px;
+  --aspect-space-12: 48px;
+  --aspect-space-16: 64px;
+}

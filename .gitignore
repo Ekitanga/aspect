@@ -1,0 +1,32 @@
+# Local infrastructure and credentials
+/.local/
+/.artifacts/
+/wp-config.php
+.env
+.env.*
+!.env.example
+
+# WordPress runtime data
+/wp-content/debug.log
+/wp-content/uploads/
+/wp-content/cache/
+/wp-content/upgrade/
+
+# Logs, caches, archives, and generated backups
+*.log
+*.cache
+*.tmp
+*.bak
+*.sql
+*.sql.gz
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
