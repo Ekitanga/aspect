@@ -82,15 +82,15 @@ function aspect_trading_render_product_card( $product ) {
 		<a class="aspect-product__image" href="<?php echo esc_url( $product_link ); ?>">
 			<?php
 			if ( $image_id ) {
-				echo wp_get_attachment_image( $image_id, 'woocommerce_thumbnail', false, array( 'loading' => 'lazy' ) );
+				echo wp_get_attachment_image( $image_id, 'woocommerce_thumbnail' );
 			} else {
 				echo wp_kses_post( wc_placeholder_img( 'woocommerce_thumbnail' ) );
 			}
 			?>
-			<?php if ( $discount > 0 ) : ?>
-				<span class="aspect-product__badge"><?php echo esc_html( sprintf( __( '%d%% off', 'aspect-trading' ), $discount ) ); ?></span>
-			<?php elseif ( ! $product->is_in_stock() ) : ?>
+			<?php if ( ! $product->is_in_stock() ) : ?>
 				<span class="aspect-product__badge aspect-product__badge--muted"><?php esc_html_e( 'Out of stock', 'aspect-trading' ); ?></span>
+			<?php elseif ( $discount > 0 ) : ?>
+				<span class="aspect-product__badge"><?php echo esc_html( sprintf( __( '%d%% off', 'aspect-trading' ), $discount ) ); ?></span>
 			<?php endif; ?>
 		</a>
 		<div class="aspect-product__body">

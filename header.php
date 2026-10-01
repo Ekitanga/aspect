@@ -49,7 +49,7 @@ $cart_count = function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_conte
 			<a class="aspect-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( $site_name ); ?>">
 				<picture>
 					<source media="(max-width: 767px)" srcset="<?php echo esc_url( $mobile_logo_url ); ?>">
-					<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $site_name ); ?>" width="288" height="72">
+					<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $site_name ); ?>" width="288" height="72" loading="eager" fetchpriority="high">
 				</picture>
 			</a>
 			<form class="aspect-search" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">

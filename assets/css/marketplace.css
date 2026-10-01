@@ -700,7 +700,7 @@ img {
 
 .aspect-category-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -1063,6 +1063,10 @@ body.woocommerce ul.products li.product span.onsale {
   .aspect-hero-services {
     display: none;
   }
+
+  .aspect-category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -1361,7 +1365,7 @@ body.woocommerce ul.products li.product span.onsale {
     gap: 10px;
   }
 
-  .aspect-category-card:nth-child(n + 5) {
+  .aspect-category-card:nth-child(n + 7) {
     display: none;
   }
 

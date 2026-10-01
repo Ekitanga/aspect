@@ -52,11 +52,11 @@ $shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 
 			<section class="aspect-section aspect-category-section" aria-label="<?php esc_attr_e( 'Shop by category', 'aspect-trading' ); ?>">
 				<div class="aspect-section__heading"><div><p class="aspect-eyebrow"><?php esc_html_e( 'Start exploring', 'aspect-trading' ); ?></p><h2><?php esc_html_e( 'Shop by category', 'aspect-trading' ); ?></h2></div><a class="aspect-text-link" href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'All departments', 'aspect-trading' ); ?> <span aria-hidden="true">&#8594;</span></a></div>
 				<div class="aspect-category-grid">
-					<?php foreach ( array_slice( $categories, 0, 8 ) as $index => $category ) : ?>
+					<?php foreach ( array_slice( $categories, 0, 9 ) as $index => $category ) : ?>
 						<?php $term_link = get_term_link( $category ); if ( is_wp_error( $term_link ) ) { continue; } $thumbnail_id = get_term_meta( $category->term_id, 'thumbnail_id', true ); ?>
 						<a class="aspect-category-card" href="<?php echo esc_url( $term_link ); ?>">
 							<span class="aspect-category-card__media<?php echo $thumbnail_id ? '' : ' aspect-category-card__media--empty'; ?>">
-								<?php if ( $thumbnail_id ) { echo wp_get_attachment_image( $thumbnail_id, 'woocommerce_thumbnail', false, array( 'loading' => 'lazy' ) ); } else { ?><span aria-hidden="true"><?php echo esc_html( sprintf( '%02d', $index + 1 ) ); ?></span><?php } ?>
+								<?php if ( $thumbnail_id ) { echo wp_get_attachment_image( $thumbnail_id, 'woocommerce_thumbnail' ); } else { ?><span aria-hidden="true"><?php echo esc_html( sprintf( '%02d', $index + 1 ) ); ?></span><?php } ?>
 							</span>
 							<span class="aspect-category-card__name"><?php echo esc_html( $category->name ); ?><span aria-hidden="true">&#8594;</span></span>
 						</a>

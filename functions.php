@@ -4,6 +4,7 @@
  */
 
 function aspect_trading_branding_setup() {
+	add_theme_support( 'title-tag' );
 	add_theme_support( 'custom-logo', array(
 		'height'      => 72,
 		'width'       => 288,

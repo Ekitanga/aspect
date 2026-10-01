@@ -10,11 +10,13 @@ Brand assets are in `assets/images/branding/`. Global color tokens are in `asset
 
 The independent WordPress development site is served by XAMPP from `C:\xampp\htdocs\aspect-trading`. Its database uses a separate MariaDB data directory at `C:\xampp\aspect-trading-db-browser` on loopback port 3308. Local credentials remain in that site's ignored `wp-config.php`, not in this source tree.
 
-The development catalog contains 24 products tagged **Development Demo**, six variations, category terms, four demo brands, and locally imported development photography. Do not present demo descriptions, imagery, or availability as final commercial information.
+The development catalogue contains 27 products tagged **Development Demo**, six variations, four demo brands, and locally imported development photography. It follows the client's confirmed top-level taxonomy: Kitchenware, Dinnerware, Home Appliances, TV & Audio, Beddings, Gadgets & Accessories, Phone & Tablets, Furnitures, and Decor & Organization. There are three published demo products in each category. Do not present demo descriptions, imagery, pricing, or availability as final commercial information.
 
-The local WordPress site currently uses a separate `aspect-trading-preview` theme to visually exercise the shared marketplace shell against live WordPress/WooCommerce data. The supplied staged Elessi 6.6.2 parent copy is missing 393 files, including required admin files, and triggers a fatal during activation. A complete matching licensed package is required before `aspect-trading` can be activated; no older Elessi files have been mixed into the parent copy.
+The local WordPress site currently uses a separate standalone `aspect-trading-preview` theme to visually exercise the shared marketplace shell against live WordPress/WooCommerce data. Its preview-only metadata and fallback template are tracked in `preview/`; the child theme retains `Template: elessi-theme`. The supplied staged Elessi 6.6.2 parent copy is missing required admin files and triggers a fatal during activation. A complete matching licensed package is required before `aspect-trading` can be activated; no older Elessi files have been mixed into the parent copy.
 
 The marketplace shell templates and helper functions are in the theme root and `inc/`. They query WordPress pages and WooCommerce categories/products dynamically. Elessi-specific logo defaults are applied only when its native desktop/mobile settings are unset.
+
+Run `tools/sync-local-theme.ps1` to synchronize the shared source into both local theme copies while preserving their different `style.css` metadata. Run `tools/backup-local-database.ps1` before material data changes. The idempotent `tools/rebuild-client-catalogue.ps1` archives the former demo catalogue and rebuilds the confirmed taxonomy and demo products; its `-ValidateOnly` switch syntax-checks the generated migration without changing data. Run `tests/site-inventory.ps1` for a credential-safe WordPress/catalogue audit, and `tests/browser-smoke.ps1` for the responsive browser matrix and console/request checks.
 
 ## Production Migration
 

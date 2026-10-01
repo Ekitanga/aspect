@@ -8,7 +8,7 @@
 	<footer class="aspect-footer">
 		<div class="aspect-container aspect-footer__grid">
 			<div class="aspect-footer__brand">
-				<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><img src="<?php echo esc_url( aspect_trading_brand_logo_url() ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ?: 'Aspect Trading' ); ?>" width="288" height="72" loading="lazy"></a>
+				<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><img src="<?php echo esc_url( aspect_trading_brand_logo_url() ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ?: 'Aspect Trading' ); ?>" width="288" height="72"></a>
 				<p><?php esc_html_e( 'A thoughtful destination for discovering everyday essentials and more.', 'aspect-trading' ); ?></p>
 			</div>
 			<?php
