@@ -239,7 +239,9 @@ function Inspect-Page {
         addToCartButtons: document.querySelectorAll('.single_add_to_cart_button, .aspect-product__add').length,
         cartItems: document.querySelectorAll('.woocommerce-cart-form__cart-item, .wc-block-cart-items__row').length,
         checkoutActions: document.querySelectorAll('.checkout-button, .wc-block-cart__submit-button').length,
-        checkoutForms: document.querySelectorAll('form.checkout, .wc-block-checkout, .woocommerce-checkout').length
+        checkoutForms: document.querySelectorAll('form.checkout, .wc-block-checkout, .woocommerce-checkout').length,
+        catalogFilterPanels: document.querySelectorAll('.aspect-catalog-filters').length,
+        catalogFilterOpen: Boolean(document.querySelector('.aspect-catalog-filters')?.open)
     };
 })()
 '@
@@ -282,6 +284,8 @@ function Inspect-Page {
         cartItems = $page.cartItems
         checkoutActions = $page.checkoutActions
         checkoutForms = $page.checkoutForms
+        catalogFilterPanels = $page.catalogFilterPanels
+        catalogFilterOpen = $page.catalogFilterOpen
         browserIssues = @(Get-BrowserIssues -Events $script:Events)
     }
 }
@@ -356,6 +360,8 @@ try {
         $routeChecks = @(
             @{ route = '/shop/'; width = 390; capture = $true },
             @{ route = '/shop/'; width = 1440; capture = $true },
+            @{ route = '/shop/?aspect_stock=outofstock'; width = 390; capture = $false },
+            @{ route = '/shop/?aspect_stock=outofstock'; width = 1440; capture = $false },
             @{ route = '/cart/'; width = 390; capture = $false },
             @{ route = '/my-account/'; width = 390; capture = $false },
             @{ route = '/?s=wireless&post_type=product'; width = 390; capture = $false },
