@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 72" role="img" aria-labelledby="title">
   <title id="title">Aspect</title>
-  <g fill="#153D40">
+  <g fill="#9A3412">
     <path d="M7 56 25 8h11L18 56Z"/>
     <path d="M28 8h11l19 48H45Z"/>
   </g>
-  <path fill="#137D6A" d="M17 36h31l9 5-9 5H14l4-10Z"/>
-  <text x="78" y="45" fill="#153D40" font-family="Aptos, Segoe UI, Helvetica Neue, sans-serif" font-size="31" font-weight="700">Aspect</text>
+  <path fill="#F28C28" d="M17 36h31l9 5-9 5H14l4-10Z"/>
+  <text x="78" y="45" fill="#431708" font-family="Aptos, Segoe UI, Helvetica Neue, sans-serif" font-size="31" font-weight="700">Aspect</text>
 </svg>

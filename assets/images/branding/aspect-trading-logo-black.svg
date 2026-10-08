@@ -3,8 +3,8 @@
   <g fill="#000000">
     <path d="M7 56 25 8h11L18 56Z"/>
     <path d="M28 8h11l19 48H45Z"/>
-    <path d="M17 36h31l9 5-9 5H14l4-10Z"/>
   </g>
+  <path fill="#D95716" d="M17 36h31l9 5-9 5H14l4-10Z"/>
   <text x="78" y="45" fill="#000000" font-family="Aptos, Segoe UI, Helvetica Neue, sans-serif" font-size="31" font-weight="700">Aspect</text>
   <text x="194" y="45" fill="#000000" font-family="Aptos, Segoe UI, Helvetica Neue, sans-serif" font-size="22" font-weight="500">Trading</text>
 </svg>

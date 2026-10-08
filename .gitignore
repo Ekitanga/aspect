@@ -12,6 +12,9 @@
 /wp-content/cache/
 /wp-content/upgrade/
 
+# Generated high-resolution catalogue masters (delivery WebPs are tracked)
+/assets/images/catalogue/*.png
+
 # Logs, caches, archives, and generated backups
 *.log
 *.cache

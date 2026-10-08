@@ -1,4 +1,12 @@
+param(
+    [switch] $AllowLegacyDemoImport
+)
+
 $ErrorActionPreference = 'Stop'
+
+if (-not $AllowLegacyDemoImport) {
+    throw 'This retired image importer targets the former demo taxonomy. Pass -AllowLegacyDemoImport only for deliberate legacy fixture work.'
+}
 
 $siteRoot = 'C:\xampp\htdocs\aspect-trading'
 $php = 'C:\xampp\php\php.exe'

@@ -22,7 +22,9 @@ $sharedFiles = @(
     'sidebar.php',
     'inc\marketplace.php',
     'assets\css\branding.css',
-    'assets\css\marketplace.css'
+    'assets\css\marketplace.css',
+    'assets\js\hero-slider.js',
+    'assets\js\product-gallery.js'
 )
 
 $brandingFiles = Get-ChildItem -LiteralPath (Join-Path $sourceRoot 'assets\images\branding') -File

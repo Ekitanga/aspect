@@ -2,7 +2,9 @@ param(
     [string] $WordPressRoot = 'C:\xampp\htdocs\aspect-trading',
     [string] $PhpPath = 'C:\xampp\php\php.exe',
     [string] $DumpPath = 'C:\xampp\mysql\bin\mysqldump.exe',
-    [string] $BackupDirectory = (Join-Path $PSScriptRoot '..\.artifacts\backups')
+    [string] $BackupDirectory = (Join-Path $PSScriptRoot '..\.artifacts\backups'),
+    [ValidatePattern('^[a-z0-9-]+$')]
+    [string] $Label = 'client-categories'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -50,7 +52,7 @@ file_put_contents(getenv('ASPECT_TRADING_DB_NAME_FILE'), DB_NAME);
 
 New-Item -ItemType Directory -Path $BackupDirectory -Force | Out-Null
 $backupRoot = [System.IO.Path]::GetFullPath((Resolve-Path -LiteralPath $BackupDirectory).Path)
-$backupFile = Join-Path $backupRoot ("aspect-trading-before-client-categories-{0}.sql" -f (Get-Date -Format 'yyyyMMdd-HHmmss'))
+$backupFile = Join-Path $backupRoot ("aspect-trading-before-{0}-{1}.sql" -f $Label, (Get-Date -Format 'yyyyMMdd-HHmmss'))
 
 if (-not $backupFile.StartsWith($backupRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
     throw 'The database backup path resolved outside the configured backup directory.'

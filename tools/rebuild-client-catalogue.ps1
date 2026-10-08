@@ -109,12 +109,12 @@ try {
                 'name' => $category['name'],
                 'slug' => $category['slug'],
                 'parent' => 0,
-                'description' => 'Development category for the Aspect Trading storefront. Replace demo catalogue details before launch.',
+                'description' => 'Shop ' . $category['name'] . ' at Aspect Trading.',
             )));
         } else {
             $created = aspect_seed_throw_on_error(wp_insert_term($category['name'], 'product_cat', array(
                 'slug' => $category['slug'],
-                'description' => 'Development category for the Aspect Trading storefront. Replace demo catalogue details before launch.',
+                'description' => 'Shop ' . $category['name'] . ' at Aspect Trading.',
             )));
             $term_id = (int) $created['term_id'];
         }
@@ -136,10 +136,7 @@ try {
     }
 
     $tag = term_exists('development-demo', 'product_tag');
-    if (!$tag) {
-        $tag = aspect_seed_throw_on_error(wp_insert_term('Development Demo', 'product_tag', array('slug' => 'development-demo')));
-    }
-    $tag_id = (int) (is_array($tag) ? $tag['term_id'] : $tag);
+    $tag_id = $tag ? (int) (is_array($tag) ? $tag['term_id'] : $tag) : 0;
 
     $old_meta_ids = get_posts(array(
         'post_type' => 'product',
@@ -149,13 +146,13 @@ try {
         'meta_key' => '_aspect_demo_catalogue',
         'meta_value' => '1',
     ));
-    $old_tag_ids = get_posts(array(
+    $old_tag_ids = $tag_id ? get_posts(array(
         'post_type' => 'product',
         'post_status' => 'publish',
         'posts_per_page' => -1,
         'fields' => 'ids',
         'tax_query' => array(array('taxonomy' => 'product_tag', 'field' => 'term_id', 'terms' => array($tag_id))),
-    ));
+    )) : array();
     $archived = 0;
     $archived_variations = 0;
     foreach (array_unique(array_merge($old_meta_ids, $old_tag_ids)) as $product_id) {
@@ -220,11 +217,11 @@ try {
         $product->set_slug($spec['slug']);
         $product->set_status('publish');
         $product->set_catalog_visibility('visible');
-        $product->set_description('Development demo product for the ' . $category['name'] . ' category. Replace the copy, pricing, imagery and availability before launch.');
-        $product->set_short_description('Development demo item for storefront testing. Replace before launch.');
+        $product->set_description('Explore the ' . $spec['name'] . ' in Aspect Trading\'s ' . $category['name'] . ' collection. Product specifications, warranty terms and delivery details must be confirmed before launch.');
+        $product->set_short_description('Explore the ' . $spec['name'] . ' in Aspect Trading\'s ' . $category['name'] . ' collection.');
         $product->set_sku('AT-CLIENT-' . str_pad((string) ($index + 1), 3, '0', STR_PAD_LEFT));
         $product->set_category_ids(array($category_ids[$spec['category']]));
-        $product->set_tag_ids(array($tag_id));
+        $product->set_tag_ids(array());
         $product->set_featured(0 === $index % 4);
         $product->set_stock_status($stock_status);
         if (isset($attachment_map[$image_file])) {
@@ -255,7 +252,7 @@ try {
         }
 
         $product_id = $product->save();
-        update_post_meta($product_id, '_aspect_demo_catalogue', '1');
+        delete_post_meta($product_id, '_aspect_demo_catalogue');
         update_post_meta($product_id, '_aspect_client_catalogue_seed', $seed_version);
         wp_set_object_terms($product_id, $type, 'product_type', false);
         if ($brand_ids) {

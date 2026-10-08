@@ -206,7 +206,7 @@ function Inspect-Page {
     const body = document.body;
     const viewportWidth = window.innerWidth;
     const documentWidth = Math.max(root.scrollWidth, body ? body.scrollWidth : 0);
-    const offenders = [...document.querySelectorAll('body *')]
+    const offenders = [body, ...document.querySelectorAll('body *')]
         .map((element) => {
             const rect = element.getBoundingClientRect();
             return {
@@ -217,8 +217,8 @@ function Inspect-Page {
                 width: Math.round(rect.width * 10) / 10
             };
         })
-        .filter((item) => item.width > 0 && (item.left < -1 || item.right > viewportWidth + 1))
-        .sort((a, b) => (b.right - viewportWidth) - (a.right - viewportWidth))
+        .filter((item) => item.width > 0 && (item.left < -1 || item.right > root.clientWidth + 1))
+        .sort((a, b) => (b.right - root.clientWidth) - (a.right - root.clientWidth))
         .slice(0, 12);
 
     return {
@@ -240,8 +240,55 @@ function Inspect-Page {
         cartItems: document.querySelectorAll('.woocommerce-cart-form__cart-item, .wc-block-cart-items__row').length,
         checkoutActions: document.querySelectorAll('.checkout-button, .wc-block-cart__submit-button').length,
         checkoutForms: document.querySelectorAll('form.checkout, .wc-block-checkout, .woocommerce-checkout').length,
+        checkoutPhoneFields: document.querySelectorAll('input[type="tel"], input[autocomplete="tel"], input[id*="phone" i]').length,
+        checkoutPhoneRequired: (() => {
+            const field = document.querySelector('input[type="tel"], input[autocomplete="tel"], input[id*="phone" i]');
+            return Boolean(field && (field.required || field.getAttribute('aria-required') === 'true'));
+        })(),
+        checkoutPostcodeRequired: (() => {
+            const field = document.querySelector('input[autocomplete="postal-code"], input[id*="postcode" i]');
+            return Boolean(field && (field.required || field.getAttribute('aria-required') === 'true'));
+        })(),
+        checkoutPaymentOptions: document.querySelectorAll('input[name*="payment-method"], .wc-block-components-radio-control-accordion-option').length,
+        checkoutPlaceOrderButtons: document.querySelectorAll('.wc-block-components-checkout-place-order-button, #place_order').length,
+        checkoutAccountControls: document.querySelectorAll('input[id*="create-account" i], .wc-block-checkout__create-account').length,
         catalogFilterPanels: document.querySelectorAll('.aspect-catalog-filters').length,
-        catalogFilterOpen: Boolean(document.querySelector('.aspect-catalog-filters')?.open)
+        catalogFilterOpen: Boolean(document.querySelector('.aspect-catalog-filters')?.open),
+        wishlistHeaderLinks: document.querySelectorAll('.aspect-wishlist-action').length,
+        wishlistButtons: document.querySelectorAll('.yith-add-to-wishlist-button-block, .yith-wcwl-add-to-wishlist-button').length,
+        wishlistTables: document.querySelectorAll('.wishlist_table').length,
+        emptyCartRecommendations: (() => {
+            const block = document.querySelector('.wp-block-woocommerce-empty-cart-block');
+            const cards = [...(block?.querySelectorAll('.wc-block-grid__product') || [])];
+            const tops = cards.map((card) => Math.round(card.getBoundingClientRect().top));
+            const firstTop = tops[0];
+            const firstCard = cards[0]?.getBoundingClientRect();
+            return {
+                cards: cards.length,
+                columns: firstTop === undefined ? 0 : tops.filter((top) => Math.abs(top - firstTop) <= 2).length,
+                ctaReady: Boolean(block?.querySelector('.aspect-empty-cart__cta[href]')),
+                cardWidth: firstCard ? Math.round(firstCard.width * 10) / 10 : 0
+            };
+        })(),
+        productGallery: (() => {
+            const gallery = document.querySelector('.woocommerce-product-gallery');
+            const stage = gallery?.querySelector('.flex-viewport, .woocommerce-product-gallery__wrapper');
+            const rail = gallery?.querySelector('.flex-control-thumbs');
+            const firstThumbnail = rail?.querySelector('img');
+            const stageRect = stage?.getBoundingClientRect();
+            const thumbnailRect = firstThumbnail?.getBoundingClientRect();
+            return {
+                thumbnails: rail?.querySelectorAll('img').length || 0,
+                keyboardReady: rail?.querySelectorAll('img[role="button"][tabindex="0"]').length || 0,
+                stageLeft: stageRect ? Math.round(stageRect.left * 10) / 10 : 0,
+                stageRight: stageRect ? Math.round(stageRect.right * 10) / 10 : 0,
+                stageBottom: stageRect ? Math.round(stageRect.bottom * 10) / 10 : 0,
+                thumbLeft: thumbnailRect ? Math.round(thumbnailRect.left * 10) / 10 : 0,
+                thumbRight: thumbnailRect ? Math.round(thumbnailRect.right * 10) / 10 : 0,
+                thumbTop: thumbnailRect ? Math.round(thumbnailRect.top * 10) / 10 : 0,
+                thumbWidth: thumbnailRect ? Math.round(thumbnailRect.width * 10) / 10 : 0
+            };
+        })()
     };
 })()
 '@
@@ -256,6 +303,13 @@ function Inspect-Page {
     if ($CaptureScreenshot) {
         $safeName = ([uri] $page.url).AbsolutePath.Trim('/').Replace('/', '-')
         if (-not $safeName) { $safeName = 'home' }
+        if ($safeName -eq 'aspect-trading-cart') {
+            if ($page.emptyCartRecommendations.cards -gt 0) {
+                $safeName += '-empty'
+            } elseif ($page.cartItems -gt 0) {
+                $safeName += '-filled'
+            }
+        }
         $screenshot = Send-CdpCommand -Socket $Socket -Method 'Page.captureScreenshot' -Parameters @{
             format = 'png'
             captureBeyondViewport = $false
@@ -284,8 +338,19 @@ function Inspect-Page {
         cartItems = $page.cartItems
         checkoutActions = $page.checkoutActions
         checkoutForms = $page.checkoutForms
+        checkoutPhoneFields = $page.checkoutPhoneFields
+        checkoutPhoneRequired = $page.checkoutPhoneRequired
+        checkoutPostcodeRequired = $page.checkoutPostcodeRequired
+        checkoutPaymentOptions = $page.checkoutPaymentOptions
+        checkoutPlaceOrderButtons = $page.checkoutPlaceOrderButtons
+        checkoutAccountControls = $page.checkoutAccountControls
         catalogFilterPanels = $page.catalogFilterPanels
         catalogFilterOpen = $page.catalogFilterOpen
+        wishlistHeaderLinks = $page.wishlistHeaderLinks
+        wishlistButtons = $page.wishlistButtons
+        wishlistTables = $page.wishlistTables
+        emptyCartRecommendations = $page.emptyCartRecommendations
+        productGallery = $page.productGallery
         browserIssues = @(Get-BrowserIssues -Events $script:Events)
     }
 }
@@ -362,10 +427,13 @@ try {
             @{ route = '/shop/'; width = 1440; capture = $true },
             @{ route = '/shop/?aspect_stock=outofstock'; width = 390; capture = $false },
             @{ route = '/shop/?aspect_stock=outofstock'; width = 1440; capture = $false },
-            @{ route = '/cart/'; width = 390; capture = $false },
+            @{ route = '/cart/'; width = 390; capture = $true },
+            @{ route = '/cart/'; width = 1440; capture = $true },
             @{ route = '/my-account/'; width = 390; capture = $false },
             @{ route = '/?s=wireless&post_type=product'; width = 390; capture = $false },
             @{ route = '/product-category/kitchenware/'; width = 390; capture = $false },
+            @{ route = '/wishlist/'; width = 1440; capture = $true },
+            @{ route = '/wishlist/'; width = 390; capture = $true },
             @{ route = '/product/wireless-over-ear-headphones/'; width = 1440; capture = $true },
             @{ route = '/product/wireless-over-ear-headphones/'; width = 390; capture = $true },
             @{ route = '/product/cotton-duvet-cover-set/'; width = 1440; capture = $true },
@@ -376,6 +444,15 @@ try {
             Write-Verbose "Inspecting $($check.route) at $($check.width)px."
             $capture = -not $SkipScreenshots -and $check.capture
             $results.Add((Inspect-Page -Socket $socket -Url ($BaseUrl.TrimEnd('/') + $check.route) -Width $check.width -CaptureScreenshot:$capture))
+        }
+
+        $emptyCartMobile = @($results | Where-Object { $_.url -match '/cart/$' -and $_.width -eq 390 -and $_.cartItems -eq 0 }) | Select-Object -First 1
+        $emptyCartDesktop = @($results | Where-Object { $_.url -match '/cart/$' -and $_.width -eq 1440 -and $_.cartItems -eq 0 }) | Select-Object -First 1
+        if (-not $emptyCartMobile -or $emptyCartMobile.emptyCartRecommendations.cards -ne 4 -or $emptyCartMobile.emptyCartRecommendations.columns -ne 2 -or -not $emptyCartMobile.emptyCartRecommendations.ctaReady) {
+            throw 'Empty cart mobile recommendations did not render four cards in two columns with a shopping CTA.'
+        }
+        if (-not $emptyCartDesktop -or $emptyCartDesktop.emptyCartRecommendations.cards -ne 4 -or $emptyCartDesktop.emptyCartRecommendations.columns -ne 4 -or -not $emptyCartDesktop.emptyCartRecommendations.ctaReady) {
+            throw 'Empty cart desktop recommendations did not render four cards in four columns with a shopping CTA.'
         }
     }
 
@@ -408,7 +485,7 @@ JSON.stringify({
     return response.ok;
 })()
 '@)
-    $simpleCart = Inspect-Page -Socket $socket -Url "$BaseUrl/cart/" -Width 390
+    $simpleCart = Inspect-Page -Socket $socket -Url "$BaseUrl/cart/" -Width 390 -CaptureScreenshot:(-not $SkipScreenshots)
     $results.Add($simpleCart)
     $workflow.simpleCartItems = $simpleCart.cartItems
     if (-not $workflow.simpleSubmitted -or $simpleCart.cartItems -lt 1) {
@@ -458,7 +535,7 @@ JSON.stringify({
     $workflow.variableResponse = $variableResponseJson
     $variableResponse = $variableResponseJson | ConvertFrom-Json
     $workflow.variableSubmitted = [bool] $variableResponse.ok
-    $variableCart = Inspect-Page -Socket $socket -Url "$BaseUrl/cart/" -Width 390
+    $variableCart = Inspect-Page -Socket $socket -Url "$BaseUrl/cart/" -Width 390 -CaptureScreenshot:(-not $SkipScreenshots)
     $results.Add($variableCart)
     $workflow.variableCartItems = $variableCart.cartItems
     if (-not $workflow.variableOption -or -not $workflow.variableReady -or -not $workflow.variableSubmitted -or $variableCart.cartItems -lt 2) {
@@ -527,7 +604,14 @@ JSON.stringify({
             $workflow.removeNetworkBody = "Unavailable: $($_.Exception.Message)"
         }
     }
-    $reducedCart = Inspect-Page -Socket $socket -Url "$BaseUrl/cart/" -Width 390
+    $cartRefreshUrl = "$BaseUrl/cart/?aspect_test_refresh=$([DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds())"
+    $reducedCart = Inspect-Page -Socket $socket -Url $cartRefreshUrl -Width 390
+    if ($reducedCart.cartItems -ge $variableCart.cartItems) {
+        $workflow.removeReloadObserved = Wait-BrowserCondition -Socket $socket -Attempts 120 -Expression "document.querySelectorAll('.woocommerce-cart-form__cart-item, .wc-block-cart-items__row').length < $($variableCart.cartItems)"
+        if ($workflow.removeReloadObserved) {
+            $reducedCart.cartItems = [int] (Invoke-BrowserExpression -Socket $socket -Expression "document.querySelectorAll('.woocommerce-cart-form__cart-item, .wc-block-cart-items__row').length")
+        }
+    }
     $results.Add($reducedCart)
     $workflow.cartItemsAfterRemove = $reducedCart.cartItems
     if (-not $workflow.removeObserved -or $reducedCart.cartItems -ge $variableCart.cartItems) {
@@ -536,11 +620,18 @@ JSON.stringify({
     }
 
     Write-Verbose 'Testing checkout rendering.'
-    $checkout = Inspect-Page -Socket $socket -Url "$BaseUrl/checkout/" -Width 390
+    $checkout = Inspect-Page -Socket $socket -Url "$BaseUrl/checkout/" -Width 390 -CaptureScreenshot:(-not $SkipScreenshots)
     $results.Add($checkout)
     $workflow.checkoutForms = $checkout.checkoutForms
-    if ($checkout.checkoutForms -lt 1) {
+    $workflow.checkoutPhoneRequired = $checkout.checkoutPhoneRequired
+    $workflow.checkoutPostcodeRequired = $checkout.checkoutPostcodeRequired
+    $checkoutDesktop = Inspect-Page -Socket $socket -Url "$BaseUrl/checkout/" -Width 1440 -CaptureScreenshot:(-not $SkipScreenshots)
+    $results.Add($checkoutDesktop)
+    if ($checkout.checkoutForms -lt 1 -or $checkoutDesktop.checkoutForms -lt 1) {
         throw 'Checkout route did not render a checkout form.'
+    }
+    if (-not $checkout.checkoutPhoneRequired -or -not $checkout.checkoutPostcodeRequired) {
+        throw "Checkout did not require the courier phone/postal fields (phone=$($checkout.checkoutPhoneRequired), postcode=$($checkout.checkoutPostcodeRequired))."
     }
 
     $report = [pscustomobject]@{

@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ASPECT_TRADING_ALLOW_LEGACY_DEMO_SEED' ) || true !== ASPECT_TRADING_ALLOW_LEGACY_DEMO_SEED ) {
+	throw new RuntimeException( 'This retired demo seeder is locked. Use rebuild-client-catalogue.ps1 for the current client taxonomy.' );
+}
+
 $category_map = array();
 foreach ( get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false ) ) as $category ) {
 	$category_map[ $category->slug ] = (int) $category->term_id;

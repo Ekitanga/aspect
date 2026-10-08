@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ASPECT_TRADING_ALLOW_LEGACY_DEMO_SEED' ) || true !== ASPECT_TRADING_ALLOW_LEGACY_DEMO_SEED ) {
+	throw new RuntimeException( 'This retired demo brand seeder is locked. Use the current catalogue rebuild workflow instead.' );
+}
+
 if ( ! taxonomy_exists( 'product_brand' ) ) {
 	echo "product_brand taxonomy is unavailable; no brand terms were created.\n";
 	return;

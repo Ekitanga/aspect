@@ -74,6 +74,32 @@ foreach (get_object_taxonomies('product', 'objects') as $name => $taxonomy) {
     }
 }
 
+$term_inventory = array(
+    'categories' => array(),
+    'brands' => array(),
+);
+foreach (get_terms(array('taxonomy' => 'product_cat', 'hide_empty' => false, 'orderby' => 'name')) as $term) {
+    $term_inventory['categories'][] = array(
+        'id' => (int) $term->term_id,
+        'name' => $term->name,
+        'slug' => $term->slug,
+        'count' => (int) $term->count,
+        'description' => $term->description,
+        'has_thumbnail' => (bool) get_term_meta($term->term_id, 'thumbnail_id', true),
+    );
+}
+if (taxonomy_exists('product_brand')) {
+    foreach (get_terms(array('taxonomy' => 'product_brand', 'hide_empty' => false, 'orderby' => 'name')) as $term) {
+        $term_inventory['brands'][] = array(
+            'id' => (int) $term->term_id,
+            'name' => $term->name,
+            'slug' => $term->slug,
+            'count' => (int) $term->count,
+            'description' => $term->description,
+        );
+    }
+}
+
 $catalogue = array();
 $loaded_product_ids = array();
 if (function_exists('wc_get_products')) {
@@ -85,11 +111,20 @@ if (function_exists('wc_get_products')) {
             'name' => $product->get_name(),
             'slug' => $product->get_slug(),
             'type' => $product->get_type(),
+            'sku' => $product->get_sku(),
+            'price' => $product->get_price(),
             'stock_status' => $product->get_stock_status(),
+            'image_id' => $product->get_image_id(),
             'has_image' => (bool) $product->get_image_id(),
             'gallery_images' => count($product->get_gallery_image_ids()),
+            'has_weight' => '' !== $product->get_weight(),
+            'has_dimensions' => '' !== $product->get_length() && '' !== $product->get_width() && '' !== $product->get_height(),
+            'short_description_length' => strlen(wp_strip_all_tags($product->get_short_description())),
+            'description_length' => strlen(wp_strip_all_tags($product->get_description())),
+            'rating_count' => $product->get_rating_count(),
             'demo_tagged' => !is_wp_error($tags) && in_array('development-demo', $tags, true),
             'categories' => wp_get_post_terms($product->get_id(), 'product_cat', array('fields' => 'names')),
+            'brands' => taxonomy_exists('product_brand') ? wp_get_post_terms($product->get_id(), 'product_brand', array('fields' => 'names')) : array(),
             'raw_product_attributes' => get_post_meta($product->get_id(), '_product_attributes', true),
             'url' => get_permalink($product->get_id()),
         );
@@ -169,6 +204,7 @@ $output = array(
         'media' => (int) wp_count_posts('attachment')->inherit,
     ),
     'brands' => $brands,
+    'term_inventory' => $term_inventory,
     'catalogue' => $catalogue,
     'unloadable_products' => $unloadable_products,
     'media' => $media,

@@ -19,7 +19,10 @@ function aspect_trading_brand_logo_url( $mobile = false ) {
 	}
 
 	$filename = $mobile ? 'aspect-trading-logo-mobile.svg' : 'aspect-trading-logo.svg';
-	return get_stylesheet_directory_uri() . '/assets/images/branding/' . $filename;
+	$file_path = get_stylesheet_directory() . '/assets/images/branding/' . $filename;
+	$logo_url = get_stylesheet_directory_uri() . '/assets/images/branding/' . $filename;
+
+	return is_file( $file_path ) ? add_query_arg( 'ver', (string) filemtime( $file_path ), $logo_url ) : $logo_url;
 }
 
 function aspect_trading_product_categories( $parent = 0 ) {
