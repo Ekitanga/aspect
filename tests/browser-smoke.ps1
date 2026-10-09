@@ -2,6 +2,7 @@
 param(
     [string] $BaseUrl = 'http://localhost/aspect-trading',
     [string] $ChromePath = 'C:\Program Files\Google\Chrome\Application\chrome.exe',
+    [string] $HostResolverRules = '',
     [string] $ArtifactDirectory = (Join-Path $PSScriptRoot '..\.artifacts\browser-smoke'),
     [switch] $SkipScreenshots,
     [switch] $WorkflowOnly
@@ -369,15 +370,19 @@ $chrome = $null
 $socket = $null
 
 try {
-    $chrome = Start-Process -FilePath $ChromePath -ArgumentList @(
-        '--headless',
+    $chromeArguments = @(
+        '--headless=new',
         '--disable-gpu',
         '--no-first-run',
         '--no-default-browser-check',
         "--remote-debugging-port=$debugPort",
         "--user-data-dir=$profileDirectory",
         'about:blank'
-    ) -PassThru -WindowStyle Hidden
+    )
+    if ($HostResolverRules) {
+        $chromeArguments += "--host-resolver-rules=`"$HostResolverRules`""
+    }
+    $chrome = Start-Process -FilePath $ChromePath -ArgumentList $chromeArguments -PassThru -WindowStyle Hidden
 
     $versionUrl = "http://127.0.0.1:$debugPort/json/version"
     $debugReady = $false
